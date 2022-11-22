@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tomcat-app1-deployment-label
+  name: tomcat-app1-deployment
+  namespace: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomcat-app1-selector
+  template:
+    metadata:
+      labels:
+        app: tomcat-app1-selector
+    spec:
+      containers:
+      - name: tomcat-app1-container
+        image: tuwei1314/tomcat:8.5.75
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+          name: http
+        resources:
+          limits:
+            cpu: 1
+            memory: "512Mi"
+          requests:
+            cpu: 500m
+            memory: "512Mi"
+	  
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: tomcat-app1-service
+  name: tomcat-app1-service
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: tomcat-app1-selector
